@@ -2,21 +2,24 @@ package cat.iesesteveterradas.fites;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import javax.xml.transform.OutputKeys;
+import java.io.FileWriter;
+import java.io.IOException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.transform.OutputKeys;
 
 /**
  * Amb Java, crea un arxiu XML "Exercici4.xml" amb l'estructura especificada.
@@ -60,8 +63,39 @@ public class Exercici4 {
         llista.add(new String[] {"Dart", "2011", ".dart", "mitjana"});
 
         // Genera l'estructura XML a partir de les dades proporcionades
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
 
-        // Guarda l'estructura generada a l'arxiu 'filePath'
+            Element rootElement = doc.createElement("llista");
+            doc.appendChild(rootElement);
+
+            for (String[] datos : llista) {
+                Element lenguaje = doc.createElement("llenguatge");
+                lenguaje.setAttribute("dificultat", datos[3]);
+                lenguaje.setAttribute("extensio", datos[2]);
+
+                Element nom = doc.createElement("nom");
+                nom.appendChild(doc.createTextNode(datos[0]));
+                lenguaje.appendChild(nom);
+
+                Element any = doc.createElement("any");
+                any.appendChild(doc.createTextNode(datos[1]));
+                lenguaje.appendChild(any);
+
+                rootElement.appendChild(lenguaje);
+            }
+              // Guarda l'estructura generada a l'arxiu 'filePath'
+            write(filePath, doc);
+            System.out.println("El archivo XML se ha creado exitosamente.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+      
+        
     }
 
     // Escriu un Document en un fitxer XML
